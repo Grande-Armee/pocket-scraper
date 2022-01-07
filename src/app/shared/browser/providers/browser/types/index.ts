@@ -1,2 +1,2 @@
 export * from './browser';
-export * from './pageContent';
+export * from './websiteInfo';

@@ -1,16 +1,20 @@
 import { BeforeApplicationShutdown, Inject, Injectable } from '@nestjs/common';
 
-import { BROWSER, Browser, PageContent } from '@shared/browser/providers/browser';
+import { BROWSER, Browser, WebsiteInfo } from '@shared/browser/providers/browser';
+import { Turndown, TURNDOWN } from '@shared/browser/providers/turndown';
 
 @Injectable()
 export class BrowserService implements BeforeApplicationShutdown {
-  public constructor(@Inject(BROWSER) private readonly browser: Browser) {}
+  public constructor(
+    @Inject(BROWSER) private readonly browser: Browser,
+    @Inject(TURNDOWN) private readonly turndown: Turndown,
+  ) {}
 
   public async beforeApplicationShutdown(): Promise<void> {
     await this.browser.close();
   }
 
-  public async getPageHTMLContent(url: string): Promise<PageContent> {
+  public async getWebsiteInfo(url: string): Promise<WebsiteInfo> {
     const page = await this.browser.newPage();
 
     await page.goto(url);
@@ -31,7 +35,7 @@ export class BrowserService implements BeforeApplicationShutdown {
 
     return {
       title,
-      content,
+      content: this.turndown.turndown(content),
     };
   }
 }
