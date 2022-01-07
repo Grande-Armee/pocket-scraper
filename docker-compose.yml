@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  pocket-scraper:
+    build:
+      context: .
+      target: development
+    container_name: pocket-scraper
+    volumes:
+      - /usr/src/app/node_modules
+      - .:/usr/src/app
+    command: npm run start:dev
+    env_file:
+      - .env
+    networks:
+      - pocket-network
+
+networks:
+  pocket-network:
+    external: true
